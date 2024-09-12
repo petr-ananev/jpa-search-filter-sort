@@ -1,2 +1,5 @@
-package org.example.jpasearchfiltersort.enums;public enum ObjectType {
+package org.example.jpasearchfiltersort.enums;
+
+public enum ObjectType {
+    SIMPLE_ENTITY
 }

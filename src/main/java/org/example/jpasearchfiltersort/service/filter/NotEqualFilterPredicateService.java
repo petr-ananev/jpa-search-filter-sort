@@ -1,15 +1,16 @@
-package com.glowbyte.decision.core.service.search.filter;
+package org.example.jpasearchfiltersort.service.filter;
 
-import com.glowbyte.decision.core.enums.Operator;
-import com.glowbyte.decision.core.model.search.FilterRequest;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.example.jpasearchfiltersort.enums.Operator;
 import org.springframework.stereotype.Service;
 
-import static com.glowbyte.decision.core.enums.Operator.NOT_EQUAL;
+import static org.example.jpasearchfiltersort.enums.Operator.NOT_EQUAL;
+
 
 @Service
 @RequiredArgsConstructor

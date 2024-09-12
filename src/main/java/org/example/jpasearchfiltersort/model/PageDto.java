@@ -17,7 +17,7 @@ import java.util.List;
  * @param <T> - сущность (Diagram, Deploy etc)
  */
 @RequiredArgsConstructor
-public class Page<T> {
+public class PageDto<T> {
 
     private final org.springframework.data.domain.Page<T> page;
 

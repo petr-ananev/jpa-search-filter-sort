@@ -1,4 +1,4 @@
-package org.example.jpasearchfiltersort.service;
+package org.example.jpasearchfiltersort.service.sort;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

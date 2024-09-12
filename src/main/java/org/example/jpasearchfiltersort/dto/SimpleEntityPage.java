@@ -1,14 +1,14 @@
-package com.glowbyte.decision.complextype.dto;
+package org.example.jpasearchfiltersort.dto;
 
- import com.glowbyte.decision.core.model.search.DecisionPage;
+import org.example.jpasearchfiltersort.model.PageDto;
 import org.springframework.data.domain.Page;
 
 /**
  * Hack для описание Swagger
  */
-public class ComplexTypePage extends DecisionPage<ComplexTypeGetFullView> {
+public class SimpleEntityPage extends PageDto<SimpleEntityViewDto> {
 
-    public ComplexTypePage(Page<ComplexTypeGetFullView> page) {
+    public SimpleEntityPage(Page<SimpleEntityViewDto> page) {
         super(page);
     }
 

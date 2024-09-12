@@ -1,28 +1,28 @@
-package com.glowbyte.decision.core.service.search.rule;
+package org.example.jpasearchfiltersort.service.rule;
 
-import com.glowbyte.decision.core.enums.DisplayMode;
-import com.glowbyte.decision.core.enums.ObjectType;
-import com.glowbyte.decision.core.service.search.builder.FilterRule;
-import com.glowbyte.decision.core.service.search.builder.QueryBody;
-import com.glowbyte.decision.core.service.search.builder.SearchRule;
-import com.glowbyte.decision.core.service.search.builder.SortRule;
+
 import jakarta.persistence.criteria.Root;
+import org.example.jpasearchfiltersort.enums.ObjectType;
+import org.example.jpasearchfiltersort.service.rule.builder.FilterRule;
+import org.example.jpasearchfiltersort.service.rule.builder.QueryBody;
+import org.example.jpasearchfiltersort.service.rule.builder.SearchRule;
+import org.example.jpasearchfiltersort.service.rule.builder.SortRule;
 
 public interface PredicateRuleService {
 
     String ROOT = "root";
 
-    QueryBody registerBody(DisplayMode displayMode, Root<?> root);
+    QueryBody registerBody(Root<?> root);
 
-    default SearchRule getSearchRule(DisplayMode displayMode) {
+    default SearchRule getSearchRule() {
         return SearchRule.empty();
     }
 
-    default SortRule getSortRule(DisplayMode displayMode) {
+    default SortRule getSortRule() {
         return SortRule.empty();
     }
 
-    default FilterRule getFilterRule(DisplayMode displayMode) {
+    default FilterRule getFilterRule() {
         return FilterRule.empty();
     }
 

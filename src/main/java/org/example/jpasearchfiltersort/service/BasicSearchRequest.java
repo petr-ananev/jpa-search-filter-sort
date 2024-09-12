@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.example.jpasearchfiltersort.service.filter.FilterRequest;
+import org.example.jpasearchfiltersort.service.sort.SortRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Convert(converter = ListSearchRequestConverter.class)
-public class ListSearchRequest implements SearchRequestInterface {
+public class BasicSearchRequest implements SearchRequestInterface {
 
     private List<FilterRequest> filters;
 

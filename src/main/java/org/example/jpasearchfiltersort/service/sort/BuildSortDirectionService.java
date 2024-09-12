@@ -1,10 +1,9 @@
-package com.glowbyte.decision.core.service.search.sort;
-
-import org.springframework.data.domain.Sort.Direction;
+package org.example.jpasearchfiltersort.service.sort;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Order;
+import org.springframework.data.domain.Sort.Direction;
 
 public interface BuildSortDirectionService {
 

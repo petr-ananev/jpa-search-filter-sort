@@ -1,19 +1,18 @@
-package com.glowbyte.decision.core.service.search.filter;
+package org.example.jpasearchfiltersort.service.filter;
 
-
-import com.glowbyte.decision.core.enums.Operator;
-import com.glowbyte.decision.core.error.FilterException;
-import com.glowbyte.decision.core.model.search.FilterRequest;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.beanutils.ConvertUtils;
-import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.example.jpasearchfiltersort.enums.Operator;
+import org.springframework.stereotype.Service;
+
 import java.sql.Timestamp;
 
-import static com.glowbyte.decision.core.enums.Operator.BETWEEN;
+import static org.example.jpasearchfiltersort.enums.Operator.BETWEEN;
+
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class BetweenFilterPredicateService implements BuildFilterPredicateServic
             Number end = (Number) valueTo;
             return cb.and(cb.ge((Expression<Number>) path, start), cb.le((Expression<Number>) path, end));
         } else {
-            throw new FilterException("Переданные в фильтр значения, не применимы к оператору Between");
+            throw new IllegalArgumentException("Переданные в фильтр значения, не применимы к оператору Between");
         }
     }
 

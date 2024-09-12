@@ -1,10 +1,10 @@
-package com.glowbyte.decision.core.dao;
+package org.example.jpasearchfiltersort.dao;
 
-import com.glowbyte.decision.core.service.search.SearchSpecification;
+import org.example.jpasearchfiltersort.service.SearchSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
-public interface DecisionReadAllPageSortAndFilterDao<T> {
+public interface ReadAllPageSortAndFilterDao<T> {
 
     /**
      * Метод получения отфильтрованного списка с пагинацией

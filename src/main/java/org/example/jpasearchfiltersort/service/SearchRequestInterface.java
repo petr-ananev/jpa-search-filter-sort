@@ -1,5 +1,8 @@
-package com.glowbyte.decision.core.model.search;
+package org.example.jpasearchfiltersort.service;
 
+
+import org.example.jpasearchfiltersort.service.filter.FilterRequest;
+import org.example.jpasearchfiltersort.service.sort.SortRequest;
 
 import java.util.List;
 

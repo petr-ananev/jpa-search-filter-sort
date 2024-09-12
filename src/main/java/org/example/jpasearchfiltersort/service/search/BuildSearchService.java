@@ -1,11 +1,5 @@
-package com.glowbyte.decision.core.service.search;
+package org.example.jpasearchfiltersort.service.search;
 
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
@@ -13,6 +7,12 @@ import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ import java.util.function.Function;
 @Service
 @RequiredArgsConstructor
 public class BuildSearchService<T> {
+
     public Predicate build(Predicate predicate, BuildSearchParameters<T> parameters) {
         if (StringUtils.isEmpty(parameters.getSearchBy())) {
             return predicate;
@@ -47,26 +48,24 @@ public class BuildSearchService<T> {
         });
         CriteriaBuilder cb = parameters.getCb();
         return cb.and(cb.or(searchRules.stream()
-                                     .map(f -> cb.like(cb.upper(f),
-                                                       "%" + parameters.getSearchBy().toUpperCase() + "%"))
-                                     .toArray(Predicate[]::new)), predicate);
+                                       .map(f -> cb.like(cb.upper(f),
+                                                         "%" + parameters.getSearchBy().toUpperCase() + "%"))
+                                       .toArray(Predicate[]::new)), predicate);
     }
 
     @Getter
-    @AllArgsConstructor
+    @AllArgsConstructor(staticName = "of")
     public static class BuildSearchParameters<T> {
 
         private Root<T> root;
-        private CriteriaBuilder cb;
-        private String searchBy;
-        private Map<String, From<?, ?>> body;
-        private Map<String, Function<From<?, ?>, List<Path<String>>>> searchRule;
 
-        public static <T> BuildSearchParameters<T> of(Root<T> root, Map<String, From<?, ?>> body,
-                                                      Map<String, Function<From<?, ?>, List<Path<String>>>> searchRule,
-                                                      CriteriaBuilder cb, String searchBy) {
-            return new BuildSearchParameters<>(root, cb, searchBy, body, searchRule);
-        }
+        private CriteriaBuilder cb;
+
+        private String searchBy;
+
+        private Map<String, From<?, ?>> body;
+
+        private Map<String, Function<From<?, ?>, List<Path<String>>>> searchRule;
 
     }
 

@@ -1,12 +1,12 @@
-package org.example.jpasearchfiltersort.service.builder;
+package org.example.jpasearchfiltersort.service.rule.builder;
 
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.jpasearchfiltersort.service.builder.SearchRule.SearchRuleStageBuilder.FinalStage;
-import org.example.jpasearchfiltersort.service.builder.SearchRule.SearchRuleStageBuilder.RequireBodyKey;
-import org.example.jpasearchfiltersort.service.builder.SearchRule.SearchRuleStageBuilder.RequireSortColumnSelector;
+import org.example.jpasearchfiltersort.service.rule.builder.SearchRule.SearchRuleStageBuilder.FinalStage;
+import org.example.jpasearchfiltersort.service.rule.builder.SearchRule.SearchRuleStageBuilder.RequireBodyKey;
+import org.example.jpasearchfiltersort.service.rule.builder.SearchRule.SearchRuleStageBuilder.RequireSortColumnSelector;
 import org.example.jpasearchfiltersort.utils.MapUtils;
 
 import java.util.HashMap;

@@ -1,14 +1,13 @@
-package com.glowbyte.decision.core.service.search.filter;
-
-import com.glowbyte.decision.core.enums.Operator;
-import com.glowbyte.decision.core.model.search.FilterRequest;
-import org.springframework.stereotype.Service;
+package org.example.jpasearchfiltersort.service.filter;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import org.example.jpasearchfiltersort.enums.Operator;
+import org.springframework.stereotype.Service;
 
-import static com.glowbyte.decision.core.enums.Operator.IS_NOT_TRUE;
+import static org.example.jpasearchfiltersort.enums.Operator.IS_NOT_TRUE;
+
 
 @Service
 public class IsNotTrueFilterPredicateService implements BuildFilterPredicateService {

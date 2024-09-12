@@ -1,16 +1,5 @@
-package com.glowbyte.decision.core.service.search.sort;
+package org.example.jpasearchfiltersort.service.sort;
 
-import com.glowbyte.decision.core.enums.ObjectType;
-import com.glowbyte.decision.core.error.FilterException;
-import com.glowbyte.decision.core.error.SortException;
-import com.glowbyte.decision.core.model.search.SearchRequestInterface;
-import com.glowbyte.decision.core.model.search.SortRequest;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaBuilder.Coalesce;
@@ -19,6 +8,14 @@ import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
+import org.example.jpasearchfiltersort.enums.ObjectType;
+import org.example.jpasearchfiltersort.service.SearchRequestInterface;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
@@ -76,7 +73,7 @@ public class BuildSortFacade<T> {
                                                     .collect(Collectors.toSet());
         Collection<String> missingColumns = CollectionUtils.removeAll(passedFilterColumns, configuredFilterColumns);
         if (CollectionUtils.isNotEmpty(missingColumns)) {
-            throw new FilterException(
+            throw new IllegalArgumentException(
                     String.format("Для объекта - %s, не настроены правила сортировки для колонок - %s",
                                   parameters.getObjectType(), String.join(", ", missingColumns)));
         }
@@ -84,7 +81,7 @@ public class BuildSortFacade<T> {
 
     private BuildSortDirectionService getBuildSortDirectionServiceByDirection(Direction direction) {
         if (isFalse(sortMap.containsKey(direction))) {
-            throw new SortException(
+            throw new IllegalArgumentException(
                     "Для оператора - %s, не настроена стратегия сортировки".formatted(direction));
         }
         return sortMap.get(direction);
@@ -95,23 +92,20 @@ public class BuildSortFacade<T> {
     }
 
     @Getter
-    @AllArgsConstructor
+    @AllArgsConstructor(staticName = "of")
     public static class BuildSortParameters<T> {
 
         private Root<T> root;
-        ObjectType objectType;
+
+        private ObjectType objectType;
+
         private CriteriaBuilder cb;
+
         private SearchRequestInterface searchRequest;
+
         private Map<String, From<?, ?>> body;
+
         private Map<String, Map<String, Function<From<?, ?>, Path<?>>>> sortRule;
-
-        public static <T> BuildSortParameters<T> of(Root<T> root, ObjectType objectType, CriteriaBuilder cb,
-                                                    SearchRequestInterface searchRequest,
-                                                    Map<String, From<?, ?>> body,
-                                                    Map<String, Map<String, Function<From<?, ?>, Path<?>>>> sortRule) {
-            return new BuildSortParameters<>(root, objectType, cb, searchRequest, body, sortRule);
-        }
-
 
     }
 

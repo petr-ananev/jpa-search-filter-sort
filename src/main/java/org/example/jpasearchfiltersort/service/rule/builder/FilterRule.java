@@ -1,14 +1,15 @@
-package org.example.jpasearchfiltersort.service.builder;
+package org.example.jpasearchfiltersort.service.rule.builder;
 
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.jpasearchfiltersort.service.builder.FilterRule.FilterRuleStageBuilder.FinalStage;
-import org.example.jpasearchfiltersort.service.builder.FilterRule.FilterRuleStageBuilder.RequireBodyKey;
-import org.example.jpasearchfiltersort.service.builder.FilterRule.FilterRuleStageBuilder.RequireFilterColumn;
-import org.example.jpasearchfiltersort.service.builder.FilterRule.FilterRuleStageBuilder.RequirePredicateConfig;
+import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.FinalStage;
+import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.RequireBodyKey;
+import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.RequireFilterColumn;
+import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.RequirePredicateConfig;
 import org.example.jpasearchfiltersort.utils.MapUtils;
 
 import java.util.HashMap;
@@ -37,13 +38,12 @@ public class FilterRule {
     }
 
     @Getter
-    @RequiredArgsConstructor(staticName = "of")
+    @AllArgsConstructor(staticName = "of")
     public static class FilterRuleConfig {
 
         private Function<From<?, ?>, Path<?>> attributePath;
 
         private Class<?> attributeType;
-
 
         public Expression<?> getExpression(From<?, ?> pathToPredicateApply) {
             return attributePath.apply(pathToPredicateApply).as(attributeType);

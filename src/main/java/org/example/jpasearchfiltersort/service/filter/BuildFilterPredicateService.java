@@ -1,11 +1,9 @@
-package com.glowbyte.decision.core.service.search.filter;
-
-import com.glowbyte.decision.core.enums.Operator;
-import com.glowbyte.decision.core.model.search.FilterRequest;
+package org.example.jpasearchfiltersort.service.filter;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import org.example.jpasearchfiltersort.enums.Operator;
 
 public interface BuildFilterPredicateService {
 

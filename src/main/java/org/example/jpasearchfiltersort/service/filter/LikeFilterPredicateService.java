@@ -1,13 +1,14 @@
-package com.glowbyte.decision.core.service.search.filter;
+package org.example.jpasearchfiltersort.service.filter;
 
-import com.glowbyte.decision.core.enums.Operator;
-import com.glowbyte.decision.core.model.search.FilterRequest;
+
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
+import org.example.jpasearchfiltersort.enums.Operator;
 import org.springframework.stereotype.Service;
 
-import static com.glowbyte.decision.core.enums.Operator.LIKE;
+import static org.example.jpasearchfiltersort.enums.Operator.LIKE;
+
 
 @Service
 public class LikeFilterPredicateService implements BuildFilterPredicateService {

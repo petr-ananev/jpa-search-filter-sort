@@ -1,25 +1,21 @@
-package com.glowbyte.decision.core.service.search.filter;
+package org.example.jpasearchfiltersort.service.filter;
 
-import com.glowbyte.decision.core.enums.DisplayMode;
-import com.glowbyte.decision.core.enums.FilterStrategy;
-import com.glowbyte.decision.core.enums.ObjectType;
-import com.glowbyte.decision.core.enums.Operator;
-import com.glowbyte.decision.core.error.FilterException;
-import com.glowbyte.decision.core.model.search.FilterRequest;
-import com.glowbyte.decision.core.model.search.SearchRequestInterface;
-import com.glowbyte.decision.core.service.search.builder.FilterRule.FilterRuleConfig;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.stereotype.Service;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.From;
-import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.CollectionUtils;
+import org.example.jpasearchfiltersort.enums.ObjectType;
+import org.example.jpasearchfiltersort.enums.Operator;
+import org.example.jpasearchfiltersort.service.SearchRequestInterface;
+import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleConfig;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +41,6 @@ import static org.apache.commons.lang3.BooleanUtils.isFalse;
 public class BuildPredicateFacade<T> {
 
     private final Map<Operator, BuildFilterPredicateService> predicateMap;
-    private final Map<FilterStrategy, EnrichFilterStrategy> enrichFilterStrategyMap;
 
     public Predicate build(Predicate predicate, BuildPredicateParameters<T> parameters) {
         if (Objects.nonNull(parameters.getSearchRequest().getFilters())) {
@@ -65,21 +60,19 @@ public class BuildPredicateFacade<T> {
                               //Получаем path(root или join) запроса куда будем применять предикат
                               From<?, ?> pathToPredicateApply = body.get(joinPath);
                               Expression<?> columnPredicate = predicateConfig.getExpression(pathToPredicateApply);
-                              EnrichFilterStrategy enrichFilterStrategy = getEnrichFilterStrategyByFilterStrategy(
-                                      predicateConfig.getFilterStrategy());
 
                               filterRequestByColumnName.get(columnName).forEach(filter -> {
                                   BuildFilterPredicateService buildFilterPredicateService =
                                           getBuildFilterPredicateServiceByOperator(filter.getOperator());
 
-                                  Predicate filterPredicate = buildFilterPredicateService.build(columnPredicate, cb, filter,
+                                  Predicate filterPredicate = buildFilterPredicateService.build(columnPredicate, cb,
+                                                                                                filter,
                                                                                                 predicateConfig.getAttributeType());
                                   if (Boolean.TRUE.equals(filter.getIsNullable())) {
                                       filterPredicate = cb.or(filterPredicate, cb.isNull(columnPredicate));
                                   }
 
-                                  Predicate enrichedPredicate = enrichFilterStrategy.enrichPredicate(cb, filterPredicate,
-                                                                                                     columnPredicate);
+                                  Predicate enrichedPredicate = cb.and(filterPredicate);
                                   list.add(cb.and(enrichedPredicate));
                               });
                           });
@@ -92,28 +85,21 @@ public class BuildPredicateFacade<T> {
 
     private void checkPredicateParameters(BuildPredicateParameters<T> parameters) {
         Set<String> configuredFilterColumns = parameters.getFilterRule().keySet();
-        Set<String> passedFilterColumns = parameters.getSearchRequest().getFilters().stream().map(FilterRequest::getColumnName)
+        Set<String> passedFilterColumns = parameters.getSearchRequest().getFilters().stream().map(
+                                                            FilterRequest::getColumnName)
                                                     .collect(Collectors.toSet());
         Collection<String> missingColumns = CollectionUtils.removeAll(passedFilterColumns, configuredFilterColumns);
         if (CollectionUtils.isNotEmpty(missingColumns)) {
-            throw new FilterException(
+            throw new IllegalArgumentException(
                     String.format("Для объекта - %s, не настроены правила фильтрации для колонок - %s",
                                   parameters.getObjectType(), String.join(", ", missingColumns)));
         }
     }
 
-    private EnrichFilterStrategy getEnrichFilterStrategyByFilterStrategy(FilterStrategy filterStrategy) {
-        if (isFalse(enrichFilterStrategyMap.containsKey(filterStrategy))) {
-            throw new FilterException(
-                    "Для типа фильтрации - %s, не настроены правила обогащения фильтрации".formatted(
-                            filterStrategy));
-        }
-        return enrichFilterStrategyMap.get(filterStrategy);
-    }
 
     private BuildFilterPredicateService getBuildFilterPredicateServiceByOperator(Operator operator) {
         if (isFalse(predicateMap.containsKey(operator))) {
-            throw new FilterException(
+            throw new IllegalArgumentException(
                     "Для оператора - %s, не настроена стратегия фильтрации".formatted(
                             operator));
         }
@@ -125,25 +111,20 @@ public class BuildPredicateFacade<T> {
     }
 
     @Getter
-    @AllArgsConstructor
+    @AllArgsConstructor(staticName = "of")
     public static class BuildPredicateParameters<T> {
 
         private Root<T> root;
-        private ObjectType objectType;
-        private DisplayMode displayMode;
-        private CriteriaBuilder cb;
-        private SearchRequestInterface searchRequest;
-        private Map<String, From<?, ?>> body;
-        private Map<String, Map<String, FilterRuleConfig>> filterRule;
 
-        public static <T> BuildPredicateParameters<T> of(Root<T> root, ObjectType objectType,
-                                                         DisplayMode displayMode,
-                                                         CriteriaBuilder cb,
-                                                         SearchRequestInterface searchRequest,
-                                                         Map<String, From<?, ?>> body,
-                                                         Map<String, Map<String, FilterRuleConfig>> filterRule) {
-            return new BuildPredicateParameters<>(root, objectType, displayMode, cb, searchRequest, body, filterRule);
-        }
+        private ObjectType objectType;
+
+        private CriteriaBuilder cb;
+
+        private SearchRequestInterface searchRequest;
+
+        private Map<String, From<?, ?>> body;
+
+        private Map<String, Map<String, FilterRuleConfig>> filterRule;
 
     }
 
