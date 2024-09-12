@@ -68,9 +68,6 @@ public class BuildPredicateFacade<T> {
                                   Predicate filterPredicate = buildFilterPredicateService.build(columnPredicate, cb,
                                                                                                 filter,
                                                                                                 predicateConfig.getAttributeType());
-                                  if (Boolean.TRUE.equals(filter.getIsNullable())) {
-                                      filterPredicate = cb.or(filterPredicate, cb.isNull(columnPredicate));
-                                  }
 
                                   Predicate enrichedPredicate = cb.and(filterPredicate);
                                   list.add(cb.and(enrichedPredicate));

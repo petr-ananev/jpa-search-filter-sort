@@ -37,6 +37,4 @@ public class FilterRequest {
 
     private List<Object> values;
 
-    private Boolean isNullable;
-
 }
