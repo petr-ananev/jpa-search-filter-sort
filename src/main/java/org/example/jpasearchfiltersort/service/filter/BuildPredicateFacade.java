@@ -34,7 +34,7 @@ import static org.apache.commons.lang3.BooleanUtils.isFalse;
  * Билд предиката {@link #build(Predicate, BuildPredicateParameters)}
  * </p>
  *
- * @param <T> - сущность (Diagram, Deploy etc)
+ * @param <T> - сущность
  */
 @Service
 @RequiredArgsConstructor

@@ -25,7 +25,7 @@ import java.util.function.Function;
  * Билд предиката {@link #build(Predicate, BuildSearchParameters)}
  * </p>
  *
- * @param <T> - сущность (Diagram, Deploy etc)
+ * @param <T> - сущность
  */
 @Service
 @RequiredArgsConstructor
