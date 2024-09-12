@@ -57,7 +57,7 @@ public class BasicSearchSpecification<T> implements SearchSpecification<T> {
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         Predicate predicate = cb.equal(cb.literal(Boolean.TRUE), Boolean.TRUE);
         if (isFalse(predicateRuleServiceMap.containsKey(objectType))) {
-            throw new IllegalArgumentException("Для объекта - %s, не заданы поля поиска".formatted(objectType));
+            throw new IllegalArgumentException("Для объекта - %s, не настроена стратегия фильтрации".formatted(objectType));
         }
         PredicateRuleService predicateRuleService = predicateRuleServiceMap.get(objectType);
         Map<String, From<?, ?>> body = predicateRuleService.registerBody(root).getQueryBodyMap();
