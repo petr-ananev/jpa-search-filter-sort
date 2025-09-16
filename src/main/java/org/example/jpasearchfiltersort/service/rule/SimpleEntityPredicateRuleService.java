@@ -1,8 +1,9 @@
 package org.example.jpasearchfiltersort.service.rule;
 
-import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import org.example.jpasearchfiltersort.enums.ObjectType;
+import org.example.jpasearchfiltersort.dto.SimpleEntityViewDto;
+import org.example.jpasearchfiltersort.model.SimpleEntity;
 import org.example.jpasearchfiltersort.model.SimpleEntity_;
 import org.example.jpasearchfiltersort.service.rule.builder.FilterRule;
 import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleConfig;
@@ -13,21 +14,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static jakarta.persistence.criteria.JoinType.LEFT;
-import static org.example.jpasearchfiltersort.enums.ObjectType.SIMPLE_ENTITY;
 import static org.example.jpasearchfiltersort.model.SimpleEntity_.ID;
 import static org.example.jpasearchfiltersort.model.SimpleEntity_.SIMPLE_RELATED_ENTITY;
 import static org.example.jpasearchfiltersort.model.SimpleRelatedEntity_.OBJECT_NAME;
 
 @Service
-public class SimpleEntityPredicateRuleService implements PredicateRuleService {
+public class SimpleEntityPredicateRuleService implements PredicateRuleService<SimpleEntityViewDto, SimpleEntity> {
 
     @Override
-    public QueryBody registerBody(Root<?> root) {
-        Join<Object, Object> join = root.join(SIMPLE_RELATED_ENTITY, LEFT);
+    public QueryBody registerBody(Root<?> root, CriteriaQuery<?> criteriaQuery) {
         return QueryBody.builder()
-                .bodyKey(ROOT).withPath(root)
-                .bodyKey(SIMPLE_RELATED_ENTITY).withPath(join)
+                .root(root)
+                .criteriaQuery(criteriaQuery)
+                .joinTables(ROOT, SIMPLE_RELATED_ENTITY)
                 .build();
     }
 
@@ -63,11 +62,6 @@ public class SimpleEntityPredicateRuleService implements PredicateRuleService {
                 .inBody(SIMPLE_RELATED_ENTITY)
                 .withColumnSelector(FilterRuleConfig.of(related -> related.get(OBJECT_NAME), String.class))
                 .build();
-    }
-
-    @Override
-    public ObjectType getObjectType() {
-        return SIMPLE_ENTITY;
     }
 
 }

@@ -3,6 +3,7 @@ package org.example.jpasearchfiltersort.service.filter;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.FetchParent;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
@@ -10,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
-import org.example.jpasearchfiltersort.enums.ObjectType;
 import org.example.jpasearchfiltersort.enums.Operator;
 import org.example.jpasearchfiltersort.service.SearchRequestInterface;
 import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleConfig;
@@ -46,7 +46,7 @@ public class BuildPredicateFacade<T> {
         if (Objects.nonNull(parameters.getSearchRequest().getFilters())) {
             checkPredicateParameters(parameters);
             List<Predicate> list = new ArrayList<>(List.of(predicate));
-            Map<String, From<?, ?>> body = parameters.getBody();
+            Map<String, FetchParent<?, ?>> body = parameters.getBody();
             Map<String, List<FilterRequest>> filterRequestByColumnName =
                     groupByFilterRequestByColumnName(parameters.getSearchRequest().getFilters());
             CriteriaBuilder cb = parameters.getCb();
@@ -58,7 +58,7 @@ public class BuildPredicateFacade<T> {
                           String columnName = columnNameToJoinPathToPredicateConfig.getKey();
                           columnNameToJoinPathToPredicateConfig.getValue().forEach((joinPath, predicateConfig) -> {
                               //Получаем path(root или join) запроса куда будем применять предикат
-                              From<?, ?> pathToPredicateApply = body.get(joinPath);
+                              From<?, ?> pathToPredicateApply = (From<?, ?>)body.get(joinPath);
                               Expression<?> columnPredicate = predicateConfig.getExpression(pathToPredicateApply);
 
                               filterRequestByColumnName.get(columnName).forEach(filter -> {
@@ -88,8 +88,8 @@ public class BuildPredicateFacade<T> {
         Collection<String> missingColumns = CollectionUtils.removeAll(passedFilterColumns, configuredFilterColumns);
         if (CollectionUtils.isNotEmpty(missingColumns)) {
             throw new IllegalArgumentException(
-                    String.format("Для объекта - %s, не настроены правила фильтрации для колонок - %s",
-                                  parameters.getObjectType(), String.join(", ", missingColumns)));
+                    String.format("Для объекта не настроены правила фильтрации для колонок - %s",
+                                  String.join(", ", missingColumns)));
         }
     }
 
@@ -108,20 +108,26 @@ public class BuildPredicateFacade<T> {
     }
 
     @Getter
-    @AllArgsConstructor(staticName = "of")
+    @AllArgsConstructor
     public static class BuildPredicateParameters<T> {
 
         private Root<T> root;
-
-        private ObjectType objectType;
 
         private CriteriaBuilder cb;
 
         private SearchRequestInterface searchRequest;
 
-        private Map<String, From<?, ?>> body;
+        private Map<String, FetchParent<?, ?>> body;
 
         private Map<String, Map<String, FilterRuleConfig>> filterRule;
+
+        public static <T> BuildPredicateParameters<T> of(Root<T> root,
+                                                         CriteriaBuilder cb,
+                                                         SearchRequestInterface searchRequest,
+                                                         Map<String, FetchParent<?, ?>> body,
+                                                         Map<String, Map<String, FilterRuleConfig>> filterRule) {
+            return new BuildPredicateParameters<>(root, cb, searchRequest, body, filterRule);
+        }
 
     }
 

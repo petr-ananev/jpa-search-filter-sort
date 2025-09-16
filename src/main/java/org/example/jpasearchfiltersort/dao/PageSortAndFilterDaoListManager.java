@@ -2,40 +2,41 @@ package org.example.jpasearchfiltersort.dao;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.jpasearchfiltersort.enums.ObjectType;
+import org.example.jpasearchfiltersort.markers.DtoMarker;
+import org.example.jpasearchfiltersort.markers.EntityMarker;
 import org.example.jpasearchfiltersort.service.BasicSearchRequest;
 import org.example.jpasearchfiltersort.service.SearchRequestFactory;
 import org.example.jpasearchfiltersort.service.SearchSpecificationCreationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 
-/**
- * Сервис - прослойка для вызова метода репозитория из переданного дао
- * Для каждой сущность @Bean создается через конфигурацию
- *
- * @param <T> - сущность
- */
+@Service
 @RequiredArgsConstructor
-public class PageSortAndFilterDaoListManager<T>
-        implements PageSortAndFilterDaoManager<T, BasicSearchRequest> {
+public class PageSortAndFilterDaoListManager<TDto extends DtoMarker, TEntity extends EntityMarker>
+        implements PageSortAndFilterDaoManager<TEntity, BasicSearchRequest> {
 
-    private final ReadAllPageSortAndFilterDao<T> decisionPageSortAndFilterDao;
+    private final Map<Class<?>, ReadAllPageSortAndFilterDao<TEntity>> decisionPageSortAndFilterDao;
 
-    private final SearchSpecificationCreationService<T> searchSpecificationCreationService;
+    private final SearchSpecificationCreationService<TDto, TEntity> searchSpecificationCreationService;
 
     private final SearchRequestFactory<BasicSearchRequest> searchRequestFactory;
 
     @Override
-    public Page<T> getAll(ObjectType objectType, BasicSearchRequest basicSearchRequest) {
+    public Page<TEntity> getAll(Class<?> entityClass, Class<?> dtoClass, BasicSearchRequest basicSearchRequest) {
         basicSearchRequest = searchRequestFactory.getDefaultSearchRequestIfNull(basicSearchRequest);
-        return getAllBase(objectType, basicSearchRequest);
+        return getAllBase(entityClass, dtoClass, basicSearchRequest);
     }
 
-    private Page<T> getAllBase(ObjectType objectType, BasicSearchRequest basicSearchRequest) {
-        return decisionPageSortAndFilterDao.getAll(
-                searchSpecificationCreationService.createSearchSpecification(basicSearchRequest, objectType),
-                PageRequest.of(basicSearchRequest.getPage(), basicSearchRequest.getSize()));
+    private Page<TEntity> getAllBase(Class<?> entityClass, Class<?> dtoClass, BasicSearchRequest basicSearchRequest) {
+        return decisionPageSortAndFilterDao.get(entityClass)
+                                           .getAll(searchSpecificationCreationService.createSearchSpecification(
+                                                           basicSearchRequest, dtoClass),
+                                                   PageRequest.of(basicSearchRequest.getPage(),
+                                                                  basicSearchRequest.getSize()));
     }
 
 }

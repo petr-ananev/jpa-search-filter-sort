@@ -10,13 +10,13 @@ import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRul
 import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.RequireBodyKey;
 import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.RequireFilterColumn;
 import org.example.jpasearchfiltersort.service.rule.builder.FilterRule.FilterRuleStageBuilder.RequirePredicateConfig;
-import org.example.jpasearchfiltersort.utils.MapUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 import static java.util.Collections.emptyMap;
+import static org.example.jpasearchfiltersort.utils.MapUtils.concatMap;
 
 @Getter
 @RequiredArgsConstructor
@@ -34,11 +34,11 @@ public class FilterRule {
     }
 
     public FilterRule merge(FilterRule filterRule) {
-        return new FilterRule(MapUtils.concatMap(this.filterRuleMap, filterRule.getFilterRuleMap()));
+        return new FilterRule(concatMap(this.filterRuleMap, filterRule.getFilterRuleMap()));
     }
 
     @Getter
-    @AllArgsConstructor(staticName = "of")
+    @AllArgsConstructor
     public static class FilterRuleConfig {
 
         private Function<From<?, ?>, Path<?>> attributePath;
@@ -47,6 +47,11 @@ public class FilterRule {
 
         public Expression<?> getExpression(From<?, ?> pathToPredicateApply) {
             return attributePath.apply(pathToPredicateApply).as(attributeType);
+        }
+
+        public static FilterRuleConfig of(Function<From<?, ?>, Path<?>> attributePath,
+                                          Class<?> attributeType) {
+            return new FilterRuleConfig(attributePath, attributeType);
         }
 
     }

@@ -10,6 +10,7 @@ import org.example.jpasearchfiltersort.dto.SimpleEntityDto.CreateDt;
 import org.example.jpasearchfiltersort.dto.SimpleEntityDto.Id;
 import org.example.jpasearchfiltersort.dto.SimpleEntityDto.ObjectName;
 import org.example.jpasearchfiltersort.dto.SimpleEntityDto.VersionId;
+import org.example.jpasearchfiltersort.markers.DtoMarker;
 
 import java.sql.Timestamp;
 
@@ -22,7 +23,8 @@ public class SimpleEntityViewDto extends SimpleEntityDto implements Id,
                                                                     VersionId,
                                                                     ChangeDt,
                                                                     CreateDt,
-                                                                    ObjectName {
+                                                                    ObjectName,
+                                                                    DtoMarker {
 
     private String id;
 

@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/decision_database?currentSchema=decision
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      data-source-properties:
+        reWriteBatchedInserts: true
+  jpa:
+    show-sql: true

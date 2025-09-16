@@ -9,14 +9,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedAttributeNode;
-import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.jpasearchfiltersort.markers.EntityMarker;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
@@ -30,12 +29,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "simple_entity")
-@NamedEntityGraph(name = "simple-graph",
-                  attributeNodes = {
-                          @NamedAttributeNode(value = "simpleRelatedEntity")
-                  }
-)
-public class SimpleEntity {
+public class SimpleEntity implements EntityMarker {
 
     @Id
     @GeneratedValue(generator = "system-uuid")

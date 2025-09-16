@@ -4,6 +4,7 @@ package org.example.jpasearchfiltersort.service.sort;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaBuilder.Coalesce;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.FetchParent;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Path;
@@ -12,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections.CollectionUtils;
-import org.example.jpasearchfiltersort.enums.ObjectType;
 import org.example.jpasearchfiltersort.service.SearchRequestInterface;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -46,7 +46,7 @@ public class BuildSortFacade<T> {
     public void build(CriteriaQuery<?> query, BuildSortParameters<T> parameters) {
         if (Objects.nonNull(parameters.getSearchRequest().getSorts())) {
             checkSortParameters(parameters);
-            Map<String, From<?, ?>> body = parameters.getBody();
+            Map<String, FetchParent<?, ?>> body = parameters.getBody();
             Map<String, SortRequest> sortRequestByColumnName =
                     groupBySortRequestByColumnName(parameters.getSearchRequest().getSorts());
             List<Order> orders = sortRequestByColumnName.entrySet().stream().map((sortColumnToSortRequest -> {
@@ -57,7 +57,7 @@ public class BuildSortFacade<T> {
                 Coalesce orderByWithCoalesce = parameters.getCb().coalesce();
                 joinPathToSortFunctionMap.entrySet().forEach(joinPathToSortFunction -> {
                     //Получаем path(root или join) запроса куда будем применять предикат
-                    From<?, ?> pathToPredicateApply = body.get(joinPathToSortFunction.getKey());
+                    From<?, ?> pathToPredicateApply = (From<?, ?>) body.get(joinPathToSortFunction.getKey());
                     orderByWithCoalesce.value(joinPathToSortFunction.getValue().apply(pathToPredicateApply));
                 });
                 return buildSortDirectionService.build(orderByWithCoalesce, parameters.getCb());
@@ -74,8 +74,8 @@ public class BuildSortFacade<T> {
         Collection<String> missingColumns = CollectionUtils.removeAll(passedFilterColumns, configuredFilterColumns);
         if (CollectionUtils.isNotEmpty(missingColumns)) {
             throw new IllegalArgumentException(
-                    String.format("Для объекта - %s, не настроены правила сортировки для колонок - %s",
-                                  parameters.getObjectType(), String.join(", ", missingColumns)));
+                    String.format("Для объекта не настроены правила сортировки для колонок - %s",
+                                  String.join(", ", missingColumns)));
         }
     }
 
@@ -92,20 +92,26 @@ public class BuildSortFacade<T> {
     }
 
     @Getter
-    @AllArgsConstructor(staticName = "of")
+    @AllArgsConstructor
     public static class BuildSortParameters<T> {
 
         private Root<T> root;
-
-        private ObjectType objectType;
 
         private CriteriaBuilder cb;
 
         private SearchRequestInterface searchRequest;
 
-        private Map<String, From<?, ?>> body;
+        private Map<String, FetchParent<?, ?>> body;
 
         private Map<String, Map<String, Function<From<?, ?>, Path<?>>>> sortRule;
+
+        public static <T> BuildSortParameters<T> of(Root<T> root, CriteriaBuilder cb,
+                                                    SearchRequestInterface searchRequest,
+                                                    Map<String, FetchParent<?, ?>> body,
+                                                    Map<String, Map<String, Function<From<?, ?>, Path<?>>>> sortRule) {
+            return new BuildSortParameters<>(root, cb, searchRequest, body, sortRule);
+        }
+
 
     }
 

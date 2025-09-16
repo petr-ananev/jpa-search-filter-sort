@@ -32,8 +32,14 @@
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <springdoc-openapi-starter-webmvc-ui-version>2.5.0</springdoc-openapi-starter-webmvc-ui-version>
         <modelmapper-version>3.2.0</modelmapper-version>
+        <postgresql-version>42.7.3</postgresql-version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
